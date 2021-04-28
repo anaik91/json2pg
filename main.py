@@ -13,8 +13,17 @@ def runquery(con,cur,query):
     cur.execute(query)
     con.commit()
 
-def createTable(con,cur,table,columns):
-    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'id' else '{} TEXT'.format(i) for i in columns ]
+def createTable(con,cur,table,data):
+    #columns = list(data.keys())
+    #query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'id' else '{} TEXT'.format(i) for i in columns ]
+    query1 = []
+    for k,v in data.items():
+        if k == 'id':
+            query1.append('{} TEXT PRIMARY KEY'.format(k))
+        elif isinstance(v,dict):
+            query1.append('{} JSONB'.format(k))
+        else:
+            query1.append('{} JSONB'.format(k))
     finalquery='CREATE TABLE IF NOT EXISTS {} ( '.format(table) + ','.join(query1) + ')'
     print('Running Query: {}'.format(finalquery))
     try:
@@ -29,12 +38,12 @@ def readjson(filename):
     data=json.loads(data)
     return data
 
-def insertdata(conn,cursor,table,columns,data):
+def insertdata(conn,cursor,table,data):
     basequery='INSERT INTO {} '.format(table) 
-    columnquery = ','.join(columns)
+    columnquery = ','.join(list(data.keys()))
     valuequery = []
     for _,v in data.items():
-        if isinstance(v,dict):
+        if isinstance(v,dict) or isinstance(v,list):
             valuequery.append('\'{}\''.format(json.dumps(v)))
         else:
             valuequery.append('\'{}\''.format(v))
@@ -46,11 +55,10 @@ def insertdata(conn,cursor,table,columns,data):
         print('Entry {} already Exists'.format(valuequery[0]))
 
 def main():
-    table='json2pg'
+    table='json2pg1'
     dir = 'files'
     all_files = os.listdir(dir)
     data=readjson('{}/{}'.format(dir,all_files[0]))
-    columns = list(data.keys())
     pg_host = os.getenv('pg_host','127.0.0.1')
     pg_db = os.getenv('pg_db','postgres')
     pg_user = os.getenv('pg_user','postgres')
@@ -58,12 +66,13 @@ def main():
     pg_port = os.getenv('pg_port','5432')
     conn,cursor = createconnection(pg_db,pg_host,pg_user,pg_password,pg_port)
     #columns = ['uuid','config','request']
-    createTable(conn,cursor,table,columns)
+    createTable(conn,cursor,table,data)
     conn.close()
+    #sys.exit()
     for eachfile in all_files:
         data=readjson('{}/{}'.format(dir,eachfile))
         conn,cursor = createconnection(pg_db,pg_host,pg_user,pg_password,pg_port)
-        insertdata(conn,cursor,table,columns,data)
+        insertdata(conn,cursor,table,data)
         conn.close()
     conn.close()
     print("Database connection closed successfully")
