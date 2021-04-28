@@ -20,10 +20,10 @@ def createTable(con,cur,table,data):
     for k,v in data.items():
         if k == 'id':
             query1.append('{} TEXT PRIMARY KEY'.format(k))
-        elif isinstance(v,dict):
+        elif isinstance(v,dict) or isinstance(v,list):
             query1.append('{} JSONB'.format(k))
         else:
-            query1.append('{} JSONB'.format(k))
+            query1.append('{} TEXT'.format(k))
     finalquery='CREATE TABLE IF NOT EXISTS {} ( '.format(table) + ','.join(query1) + ')'
     print('Running Query: {}'.format(finalquery))
     try:
@@ -55,7 +55,7 @@ def insertdata(conn,cursor,table,data):
         print('Entry {} already Exists'.format(valuequery[0]))
 
 def main():
-    table='json2pg1'
+    table='json2pg'
     dir = 'files'
     all_files = os.listdir(dir)
     data=readjson('{}/{}'.format(dir,all_files[0]))

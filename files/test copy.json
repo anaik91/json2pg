@@ -1,25 +1,53 @@
 {
-	"id": "5811-pagesix.mobileapp-bottom-home",
-	"banner": {
-		"format": [{
-			"w": 320,
-			"h": 50
-		}]
+	"id": "5851-decider.mobileamp-bottom-stories",
+	"site": {
+		"page": "decider.com"
 	},
 	"ext": {
-		"newsconnect": {
-			"placementId": 19858218
-		},
-		"appnexus": {
-			"placementId": 19858177
-		},
-		"rubicon": {
-			"accountId": 11076,
-			"siteId": 341146,
-			"zoneId": 1799138
-		},
-		"triplelift": {
-			"inventoryCode": "nypost_ios_320x50_hdx_pb"
+		"prebid": {
+			"aliases": {
+				"newsconnect": "appnexus"
+			},
+			"targeting": {
+				"pricegranularity": {
+					"precision": 2,
+					"ranges": [{
+						"min": 0,
+						"max": 3,
+						"increment": 0.01
+					}, {
+						"min": 3,
+						"max": 8,
+						"increment": 0.05
+					}, {
+						"min": 8,
+						"max": 50,
+						"increment": 0.5
+					}]
+				}
+			}
 		}
-	}
+	},
+	"imp": [{
+		"id": "5850-decider.mobileamp-bottom-stories-imp-id",
+		"banner": {
+			"format": [{
+				"w": 320,
+				"h": 50
+			}]
+		},
+		"ext": {
+			"newsconnect": {
+				"placementId": 19743689
+			},
+			"appnexus": {
+				"placementId": 19743618
+			},
+			"rubicon": {
+				"accountId": 11076,
+				"siteId": 339824,
+				"zoneId": 1791120
+			}
+		}
+	}]
 }
