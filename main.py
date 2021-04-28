@@ -14,7 +14,7 @@ def runquery(con,cur,query):
     con.commit()
 
 def createTable(con,cur,table,columns):
-    query1 = [ '{} TEXT'.format(i) for i in columns ]
+    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'id' else '{} TEXT'.format(i) for i in columns ]
     finalquery='CREATE TABLE IF NOT EXISTS {} ( '.format(table) + ','.join(query1) + ')'
     print('Running Query: {}'.format(finalquery))
     try:
@@ -41,10 +41,14 @@ def main():
             valuequery.append('\'{}\''.format(json.dumps(v)))
         else:
             valuequery.append('\'{}\''.format(v))
+    #print(valuequery)
     finalquery = '''{} ({}) VALUES ({})'''.format(basequery,columnquery,','.join(valuequery))
     #print(finalquery)
-    cursor.execute(finalquery)
-    conn.commit()
+    try:
+        cursor.execute(finalquery)
+        conn.commit()
+    except psycopg2.errors.UniqueViolation:
+        print('Entry {} already Exists'.format(valuequery[0]))
     conn.close()
     print("Database connection closed successfully")
 
