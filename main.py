@@ -60,7 +60,7 @@ def main():
     #columns = ['uuid','config','request']
     createTable(conn,cursor,table,columns)
     conn.close()
-    for eachfile in os.listdir(dir):
+    for eachfile in all_files:
         data=readjson('{}/{}'.format(dir,eachfile))
         conn,cursor = createconnection(pg_db,pg_host,pg_user,pg_password,pg_port)
         insertdata(conn,cursor,table,columns,data)
