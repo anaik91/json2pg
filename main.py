@@ -14,7 +14,7 @@ def runquery(con,cur,query):
     con.commit()
 
 def createTable(con,cur,table,columns):
-    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'uuid' else '{} TEXT'.format(i) for i in columns ]
+    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'id' else '{} TEXT'.format(i) for i in columns ]
     finalquery='CREATE TABLE IF NOT EXISTS {} ( '.format(table) + ','.join(query1) + ')'
     print('Running Query: {}'.format(finalquery))
     try:
@@ -48,13 +48,21 @@ def insertdata(conn,cursor,table,columns,data):
 def main():
     table='json2pg'
     dir = 'files'
-    conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
-    columns = ['uuid','config','request']
+    all_files = os.listdir(dir)
+    data=readjson('{}/{}'.format(dir,all_files[0]))
+    columns = list(data.keys())
+    pg_host = os.getenv('pg_host','127.0.0.1')
+    pg_db = os.getenv('pg_db','postgres')
+    pg_user = os.getenv('pg_user','postgres')
+    pg_password = os.getenv('pg_password','password')
+    pg_port = os.getenv('pg_port','5432')
+    conn,cursor = createconnection(pg_db,pg_host,pg_user,pg_password,pg_port)
+    #columns = ['uuid','config','request']
     createTable(conn,cursor,table,columns)
     conn.close()
     for eachfile in os.listdir(dir):
         data=readjson('{}/{}'.format(dir,eachfile))
-        conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
+        conn,cursor = createconnection(pg_db,pg_host,pg_user,pg_password,pg_port)
         insertdata(conn,cursor,table,columns,data)
         conn.close()
     conn.close()
