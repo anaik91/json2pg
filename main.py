@@ -1,4 +1,4 @@
-import sys
+import sys,os
 import json 
 import psycopg2
 from psycopg2.extras import Json, DictCursor
@@ -24,17 +24,12 @@ def createTable(con,cur,table,columns):
         print('Issue creating Table : {}'.format(table))
         sys.exit(1)
 
-def main():
-    table='json2pg'
-    f='test.json'
-    data=open(f).read()
+def readjson(filename):
+    data=open(filename).read()
     data=json.loads(data)
-    #conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
-    #cursor = conn.cursor()
-    conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
-    #columns = list(data.keys())
-    columns = ['uuid','config','request']
-    createTable(conn,cursor,table,columns)
+    return data
+
+def insertdata(conn,cursor,table,columns,data):
     basequery='INSERT INTO {} '.format(table) 
     columnquery = ','.join(columns)
     valuequery = []
@@ -43,14 +38,25 @@ def main():
             valuequery.append('\'{}\''.format(json.dumps(v)))
         else:
             valuequery.append('\'{}\''.format(v))
-    #print(valuequery)
     finalquery = '''{} ({}) VALUES ({})'''.format(basequery,columnquery,','.join(valuequery))
-    #print(finalquery)
     try:
         cursor.execute(finalquery)
         conn.commit()
     except psycopg2.errors.UniqueViolation:
         print('Entry {} already Exists'.format(valuequery[0]))
+
+def main():
+    table='json2pg'
+    dir = 'files'
+    conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
+    columns = ['uuid','config','request']
+    createTable(conn,cursor,table,columns)
+    conn.close()
+    for eachfile in os.listdir(dir):
+        data=readjson('{}/{}'.format(dir,eachfile))
+        conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
+        insertdata(conn,cursor,table,columns,data)
+        conn.close()
     conn.close()
     print("Database connection closed successfully")
 

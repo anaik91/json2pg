@@ -1,0 +1,25 @@
+{
+	"id": "5800-pagesix.mobileapp-bottom-home",
+	"banner": {
+		"format": [{
+			"w": 320,
+			"h": 50
+		}]
+	},
+	"ext": {
+		"newsconnect": {
+			"placementId": 19858218
+		},
+		"appnexus": {
+			"placementId": 19858177
+		},
+		"rubicon": {
+			"accountId": 11076,
+			"siteId": 341146,
+			"zoneId": 1799138
+		},
+		"triplelift": {
+			"inventoryCode": "nypost_ios_320x50_hdx_pb"
+		}
+	}
+}
