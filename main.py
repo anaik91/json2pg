@@ -14,7 +14,7 @@ def runquery(con,cur,query):
     con.commit()
 
 def createTable(con,cur,table,columns):
-    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'id' else '{} TEXT'.format(i) for i in columns ]
+    query1 = [ '{} TEXT PRIMARY KEY'.format(i) if i == 'uuid' else '{} TEXT'.format(i) for i in columns ]
     finalquery='CREATE TABLE IF NOT EXISTS {} ( '.format(table) + ','.join(query1) + ')'
     print('Running Query: {}'.format(finalquery))
     try:
@@ -32,7 +32,8 @@ def main():
     #conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
     #cursor = conn.cursor()
     conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
-    columns = list(data.keys())
+    #columns = list(data.keys())
+    columns = ['uuid','config','request']
     createTable(conn,cursor,table,columns)
     basequery='INSERT INTO {} '.format(table) 
     columnquery = ','.join(columns)
