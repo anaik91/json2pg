@@ -29,8 +29,9 @@ def main():
     f='test.json'
     data=open(f).read()
     data=json.loads(data)
-    conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
-    cursor = conn.cursor()
+    #conn = psycopg2.connect(database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432')
+    #cursor = conn.cursor()
+    conn,cursor = createconnection('postgres','127.0.0.1','postgres','password',5432)
     columns = list(data.keys())
     createTable(conn,cursor,table,columns)
     basequery='INSERT INTO {} '.format(table) 
